@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -36,5 +36,29 @@ class TestHTMLNode(unittest.TestCase):
     def test_not_dict(self):
         node = HTMLNode(props=1)
         self.assertEqual(str(node), 'HTMLNode(None, None, None, "")')
+
+
+class TestLeafNode(unittest.TestCase):
+    def test_leaf_to_html_p(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+    def test_leaf_to_html_a(self):
+        node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
+        self.assertEqual(node.to_html(), '<a href="https://www.google.com">Click me!</a>')
+
+    def test_leaf_no_value(self):
+        node = LeafNode("a", None)
+        self.assertRaises(ValueError)
+
+    def test_leaf_no_value(self):
+        node = LeafNode(None, 'Value')
+        self.assertEqual(node.to_html(), 'Value')
+    
+    def test_leaf_children_instead_of_props(self):
+        node = LeafNode("a", "Click me!", [HTMLNode()])
+        self.assertEqual(node.to_html(), '<a>Click me!</a>')
+
+
 if __name__ == "__main__":
     unittest.main()
